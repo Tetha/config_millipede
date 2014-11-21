@@ -1,0 +1,22 @@
+service demo1 {
+    aspect => {
+        foo => {
+            reload => "cat /etc/demo1/foo /var/log/demo1/received-foo-$(date)"
+        }
+    }
+}
+
+triggers [
+    cli {
+        target => "*:demo1:foo"
+        sources => {
+            foo => read_file "/var/spool/millipede/new_foo"
+        }
+    }
+]
+
+targets [
+    "localhost:demo1:foo" => write_file {
+        target => "/etc/demo1/foo"
+    }
+]
