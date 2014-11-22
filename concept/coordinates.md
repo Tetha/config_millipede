@@ -32,7 +32,9 @@ we check the following rules:
   - web{01,02,03}.shop.{us,eu}.acme.org
   - web*.shop.us.acme.org
   - web*.shop.*.acme.org
-  
-  If the millipede has a choice to choose multiple coordinates at a certain point, it will prefer the *most*
-  specific fitting wild-card. If multiple wildcards match and all are equally specific, the millipede complains
-  about this with an error. 
+
+If the millipede has a choice to choose multiple coordinates at a certain point, it will prefer the *most*
+specific fitting wild-card. If multiple wildcards match and all are equally specific, the millipede complains
+about this with an error. 
+
+On full coordinates, FQDN specifity > Service Specifity > File specifity. 
