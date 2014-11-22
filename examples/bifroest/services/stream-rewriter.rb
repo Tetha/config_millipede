@@ -29,7 +29,7 @@ source "bifroest-*:stream-rewriter:logging" {
     stdout_from "/usr/bin/logging_manager log4j live/stream-rewriter/logging.json"
 }
 
-source "test-bifroest-*:stream-rewriter:logging {
+source "test-bifroest-*:stream-rewriter:logging" {
     checkout 'server-profiling/bifroest-config'
     stdout_from "/usr/bin/logging_manager log4j test/stream-rewriter/logging.json"
 }
@@ -39,7 +39,7 @@ source "bifroest-*:stream-rewriter:retention" {
     contents_of "live/retention.conf"
 }
 
-source "test-bifroest-*:stream-rewriter:retention {
+source "test-bifroest-*:stream-rewriter:retention" {
     checkout 'server-profiling/bifroest-config'
     contents_of "test/retention.conf"
 }
@@ -49,7 +49,7 @@ source "bifroest-*:stream-rewriter:basic" {
     contents_of "live/stream-rewriter/application"
 }
 
-source "test-bifroest-*:stream-rewriter:basic {
+source "test-bifroest-*:stream-rewriter:basic" {
     checkout 'server-profiling/bifroest-config'
     contents_of "test/stream-rewriter/application"
 }
