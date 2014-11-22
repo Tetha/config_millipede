@@ -26,7 +26,7 @@ service "stream-rewriter" {
 
 source "bifroest-*:stream-rewriter:logging" {
     checkout 'server-profiling/bifroest-config'
-    stdout_from "/usr/bin/logging_manager log4j ${GIT_CHECKOUT}/live/stream-rewriter/logging.json
+    stdout_from "/usr/bin/logging_manager log4j live/stream-rewriter/logging.json
 }
 
 source "test-bifroest-*:stream-rewriter:logging {
@@ -46,7 +46,7 @@ source "test-bifroest-*:stream-rewriter:retention {
 
 source "bifroest-*:stream-rewriter:basic" {
     checkout 'server-profiling/bifroest-config'
-    contents_of "live/stream-rewriter/application
+    contents_of "live/stream-rewriter/application"
 }
 
 source "test-bifroest-*:stream-rewriter:basic {
