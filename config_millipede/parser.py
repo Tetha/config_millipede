@@ -7,6 +7,28 @@ class Parser(object):
         self.column = 0
         self.line = 0
 
+    def word(self):
+        """Reads a word, ie a sequence of alphanumeric characters
+
+           >>> Parser('foo').word()
+           (True, 'foo')
+           >>> Parser('contents_of').word()
+           (True, 'contents_of')
+           >>> Parser('"blorb"').word()
+           (False,)
+        """
+        word_char = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-"
+        result = ""
+        while self.position < len(self.contents):
+            if self.contents[self.position] not in word_char:
+                break
+            result += self.contents[self.position]
+            self.position += 1
+        if result == "":
+            return (False,)
+        else:
+            return (True, result)
+
     def quoted_string(self):
         """Reads a quoted string at the current position. Supports escapes
 
