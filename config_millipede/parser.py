@@ -7,6 +7,33 @@ class Parser(object):
         self.column = 0
         self.line = 0
 
+    def funcall(self):
+        """reads a function call with a single parameter
+
+           >>> r = Parser('foo "bar"').funcall()
+           >>> r[0]
+           True
+           >>> r[1]['function']
+           'foo'
+           >>> r[1]['parameter']
+           'bar'
+        """
+
+        word_res = self.word()
+        if not word_res[0]:
+            raise SyntaxError("Cannot parse word at line %d, column %d", self.line, self.column)
+
+        while self.contents[self.position] in ' \t':
+            self.position += 1
+            self.column += 1
+
+        param_res = self.quoted_string()
+        if param_res[0]:
+            parameter = param_res[1]
+        else:
+            parameter = None
+        return (True, { 'function' : word_res[1], 'parameter' : parameter })
+        
     def word(self):
         """Reads a word, ie a sequence of alphanumeric characters
 
@@ -24,6 +51,7 @@ class Parser(object):
                 break
             result += self.contents[self.position]
             self.position += 1
+            self.column += 1
         if result == "":
             return (False,)
         else:
