@@ -1,55 +1,75 @@
 service "stream-rewriter" {
     aspect "logging" {
-        file "log4j" {
+        fragment "log4j" {
             apply => write_to "/etc/bifroest/stream-rewriter/log4j.xml"
         }
-        file "logrotate" {
+        fragment "logrotate" {
             apply => write_to "/etc/logrotate.d/bifroest-stream-rewriter"
         }
-        file "bash aliases" {
+        fragment "bash aliases" {
             apply => write_to "/etc/profile.d/bifroest-streamrewriter"
         }
     }
     aspect "retention" {
-        file "retention" {
+        reload => shell_command "bifroest-json-client stream-rewriter reload-config"
+        fragment "retention" {
             apply => write_to "/etc/bifroest/stream-rewriter/retention.conf"
-            reload => shell_command "graphite-json-client stream-rewriter reload-config"
         }
     }
-    aspect "basic" {
-        fileset "system" {
+    aspect "fundamental" {
+        reload => restart_service "bifroest-stream-rewriter"
+        fragment "system/*.conf" {
             apply => write_to "/etc/bifroest/stream-rewriter/"
-            reload => restart_service "bifroest-stream-rewriter"
         }
     }
 }
 
 source "bifroest-*:stream-rewriter:logging" {
     checkout 'server-profiling/bifroest-config'
-    stdout_from "/usr/bin/logging_manager log4j live/stream-rewriter/logging.json"
+    fragment "log4j" {
+        stdout_from "/usr/bin/logging_manager log4j live/stream-rewriter/logging.json"
+    }
+    fragment "logrotate" {
+        stdout_from "/usr/bin/logging_manager logrotate live/stream-rewriter/logging.json"
+    }
+    fragment "bash_aliases" {
+        stdout_from "/usr/bin/logging_manager bash_aliases live/stream-rewriter/logging.json"
+    }
 }
 
 source "test-bifroest-*:stream-rewriter:logging" {
     checkout 'server-profiling/bifroest-config'
-    stdout_from "/usr/bin/logging_manager log4j test/stream-rewriter/logging.json"
+    fragment "log4j" {
+        stdout_from "/usr/bin/logging_manager log4j live/stream-rewriter/logging.json"
+    }
+    fragment "logrotate" {
+        stdout_from "/usr/bin/logging_manager logrotate live/stream-rewriter/logging.json"
+    }
+    fragment "bash_aliases" {
+        stdout_from "/usr/bin/logging_manager bash_aliases live/stream-rewriter/logging.json"
+    }
 }
 
 source "bifroest-*:stream-rewriter:retention" {
     checkout 'server-profiling/bifroest-config'
-    contents_of "live/retention.conf"
+    fragment "retention" {
+	    contents_of "live/retention.conf"
+    }
 }
 
 source "test-bifroest-*:stream-rewriter:retention" {
     checkout 'server-profiling/bifroest-config'
-    contents_of "test/retention.conf"
+    fragment "retention" {
+        contents_of "test/retention.conf"
+    }
 }
 
 source "bifroest-*:stream-rewriter:basic" {
     checkout 'server-profiling/bifroest-config'
-    contents_of "live/stream-rewriter/application"
+    fragments_from_wildcard "live/stream-rewriter/application/*.conf"
 }
 
 source "test-bifroest-*:stream-rewriter:basic" {
     checkout 'server-profiling/bifroest-config'
-    contents_of "test/stream-rewriter/application"
+    fragments_from_wildcard "test/stream-rewriter/application/*.conf"
 }
