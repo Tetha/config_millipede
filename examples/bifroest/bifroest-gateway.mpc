@@ -1,0 +1,27 @@
+# The bifroest cluster frontend makes sure that config pushes are applied correctly
+# to the bifroest cluster. This means, that the right configurations are applied as
+# close (time-wise) across all nodes, while certain other configuration pushes are
+# applied in a rolling manner, to avoid downtimes.
+#
+# Furthermore, it is necessary to make it easy to add new nodes to relay to, so this
+# configuration doesn't turn into a  massive change hell.
+
+# TODO: figure out node configuration
+
+# Assumptions: I'm the gateway to bifroest-*.services.acme.org
+
+# relay is a sequence of relay rules. First matching rule applies
+relay [
+    # fundamental changes trigger restarts => we need to be careful
+    bifroest*:*:fundamental => sequential {}
+
+    # If I didn't specify it, just forward it everywhere
+    # at once.
+    # Conciously ignored: 
+    # - retention: must go everywhere at the same time
+    # - logging: has no productive impact, can go everywhere in parallel
+    bifroest* => parallel {}
+
+    # Everything else must go to other hosts => drop
+    * => drop {}
+]
