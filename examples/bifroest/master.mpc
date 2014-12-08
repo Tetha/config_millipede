@@ -55,3 +55,7 @@ source "test-bifroest-*:stream-rewriter:basic" {
     checkout 'server-profiling/bifroest-config'
     fragments_from_wildcard "test/stream-rewriter/application/*.conf"
 }
+
+source "bifroest-web01.services.acme.org:millipede-relay:nodes" {
+    stdout_from "/usr/bin/magic_racktables_query bifroest-nodes"
+}

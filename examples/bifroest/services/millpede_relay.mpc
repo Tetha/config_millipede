@@ -1,0 +1,8 @@
+service "millipede-relay" {
+    aspect "nodes" {
+        reload => shell_command "echo 'reload-nodes' > nc localhost 800"
+        fragment "nodes.conf" {
+            apply => write_to "/etc/millipede/nodes.conf"
+        }
+    }
+}
