@@ -10,3 +10,7 @@ generation:
             files:
                 - bifroest-config/$hostname/stream-rewriter/logging,json
                 - bifroest-config/default/stream-rewriter/logging.json
+
+authorization:
+    - group: profiling
+      allowed: bifroest-storage*@*@*
