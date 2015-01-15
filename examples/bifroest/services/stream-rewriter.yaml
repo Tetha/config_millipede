@@ -1,0 +1,61 @@
+name: stream-rewriter
+aspects:
+    logging:
+      fragments:
+          - fragment-name: logging-manager-config
+            pre-push-validate:
+                - require: valid-json
+            apply:
+                - step: atomic-write
+                  to: /etc/logging-manager/stream-rewriter
+
+                - step: execute
+                  command: /usr/bin/logging-manager /etc/logging-manager/stream-rewriter
+
+    retention:
+       reload:
+           - step: send-to-tcp-socket
+             host: localhost
+             port: 9000
+             contents: "{ 'command' : 'reload-config' }"
+
+       fragments:
+           - fragment-name: retention
+             pre-push-validate:
+                 - require: valid-json
+             apply:
+                 - step: atomic-write
+                   to: /etc/bifroest/stream-rewriter/retention.conf
+
+      
+     base:
+       reload:
+           - step: restart-service
+
+       fragments:
+            - fragment-name: base-config
+              apply:
+                  - step: execute
+                    command: tar -cf /tmp/old-config.tar -C /etc/bifroest/stream-rewriter/base-config
+
+                  - step: atomic-write
+                    to: /tmp/base-config-tmp.tar
+
+                  - step: execute
+                    command: tar -xf /tmp/base-config-tmp.tar -C /etc/bifroest/stream-rewriter/base-config
+       failure-handling:
+           - step: trigger-abort
+
+           - step: execute
+             command: mv /etc/bifroest/stream-rewriter/base-config /etc/bifroest/stream-rewriter/base-config.rollback
+
+           - step: execute
+             command: tar -xf /tmp/old-config.tar -C /etc/bifroest/stream-rewriter/base-config
+
+       cleanup:
+           - step: execute
+             command: rm /tmp/old-config.tar
+
+reload-includes: 
+    base:
+        - retention

@@ -1,0 +1,30 @@
+routing:
+    bifroest-storage*.services.nl.ggs-net.com@bifroest-cluster@retention
+        - step: execute
+          command: ssh millipede@bifroest-web01.services.nl.ggs-net.com "sudo service aggregator stop"
+
+        - step: route
+          rename-service: stream-rewriter
+          mode: parallel
+
+        - step: route
+          rename-service: bifroest
+          mode: parallel
+
+        - step: route
+          rename-service: aggregator
+          mode: parallel
+
+        - step: execute
+          command: ssh millipede@bifroest-web01.services.nl.ggs-net.com "sudo service aggregator start"
+
+    bifroest-storage*.services.nl.ggs-net.com@*@retention
+        - step: abort
+
+    bifroest-storage*.services.nl.ggs-net.com@stream-rewriter@base
+        - step: route
+          mode: sequential
+
+    *@*@*:
+        - step: route
+          mode: parallel

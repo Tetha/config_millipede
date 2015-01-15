@@ -1,0 +1,12 @@
+generation:
+    - service: stream-rewriter
+      aspect: logging
+      generation:
+          - step: checkout-git-branch
+            git-url: source.services.ggs-net.com/server-profiling/bifroest-config.git
+            branch: master
+
+          - step: use-first-file
+            files:
+                - bifroest-config/$hostname/stream-rewriter/logging,json
+                - bifroest-config/default/stream-rewriter/logging.json
